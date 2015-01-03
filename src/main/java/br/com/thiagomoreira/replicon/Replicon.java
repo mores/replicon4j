@@ -31,6 +31,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import br.com.thiagomoreira.replicon.model.DateRange;
+import br.com.thiagomoreira.replicon.model.Department;
 import br.com.thiagomoreira.replicon.model.Program;
 import br.com.thiagomoreira.replicon.model.Project;
 import br.com.thiagomoreira.replicon.model.ProjectAllocation;
@@ -82,6 +83,23 @@ public class Replicon {
 		};
 
 		this.restTemplate = new RestTemplate(clientHttpRequestFactory);
+	}
+
+	public Department[] getEnabledDepartments() {
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		ResponseEntity<Response<Department[]>> response = null;
+		HttpEntity<String> httpEntity = new HttpEntity<String>(headers);
+
+		response = restTemplate.exchange(getBaseServiceUrl()
+				+ "/DepartmentService1.svc/GetEnabledDepartments",
+				HttpMethod.POST, httpEntity,
+				new ParameterizedTypeReference<Response<Department[]>>() {
+				});
+
+		return response.getBody().getD();
 	}
 
 	public Program[] getPrograms() {

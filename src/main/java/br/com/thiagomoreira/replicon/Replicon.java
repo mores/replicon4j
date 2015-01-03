@@ -41,6 +41,7 @@ import br.com.thiagomoreira.replicon.model.Task;
 import br.com.thiagomoreira.replicon.model.TaskAllocation;
 import br.com.thiagomoreira.replicon.model.TimeOffAllocation;
 import br.com.thiagomoreira.replicon.model.User;
+import br.com.thiagomoreira.replicon.model.operations.AssignResourceToProjectRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetDirectReportsForUserRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetProjectDetailsRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetResourceAllocationSummaryRequest;
@@ -83,6 +84,31 @@ public class Replicon {
 		};
 
 		this.restTemplate = new RestTemplate(clientHttpRequestFactory);
+	}
+
+	public String assignResourceToProject(String projectUri,
+			String resourceUri, String resourceToReplaceUri) throws IOException {
+
+		AssignResourceToProjectRequest request = new AssignResourceToProjectRequest();
+		request.setProjectUri(projectUri);
+		request.setResourceUri(resourceUri);
+		request.setResourceToReplaceUri(resourceToReplaceUri);
+
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		ResponseEntity<Response<String>> response = null;
+		HttpEntity<String> httpEntity = new HttpEntity<String>(
+				objectMapper.writeValueAsString(request), headers);
+
+		response = restTemplate.exchange(getBaseServiceUrl()
+				+ "/ProjectService1.svc/AssignResourceToProject",
+				HttpMethod.POST, httpEntity,
+				new ParameterizedTypeReference<Response<String>>() {
+				});
+
+		return response.getBody().getD();
 	}
 
 	public Department[] getEnabledDepartments() {

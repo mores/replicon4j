@@ -21,24 +21,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Task {
+public class Target {
 
-	public Task() {
-		customFieldValues = new String[0];
-		assignedResources = new AssignedResources[0];
-	}
-
-	protected Target target;
+	protected String uri;
 	protected String name;
-	protected String code;
-	protected String description;
-	protected DateRange timeEntryDateRange;
-	protected int percentCompleted;
-	protected boolean isIsTimeEntryAllowed;
-	protected String estimatedHours;
-	protected boolean isIsClosed;
-	protected String[] customFieldValues;
-	protected String estimatedCost;
-	protected String costTypeUri;
-	protected AssignedResources[] assignedResources;
+	protected String parent;
+	protected String parameterCorrelationId;
 }

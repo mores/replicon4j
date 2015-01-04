@@ -37,6 +37,7 @@ import br.com.thiagomoreira.replicon.model.Project;
 import br.com.thiagomoreira.replicon.model.ProjectAllocation;
 import br.com.thiagomoreira.replicon.model.Resource;
 import br.com.thiagomoreira.replicon.model.Response;
+import br.com.thiagomoreira.replicon.model.Target;
 import br.com.thiagomoreira.replicon.model.Task;
 import br.com.thiagomoreira.replicon.model.TaskAllocation;
 import br.com.thiagomoreira.replicon.model.TimeOffAllocation;
@@ -53,6 +54,7 @@ import br.com.thiagomoreira.replicon.model.operations.GetTaskDetailsRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetTimeOffDetailsForUserAndDateRangeRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetUser2Request;
 import br.com.thiagomoreira.replicon.model.operations.PutProjectInfoRequest;
+import br.com.thiagomoreira.replicon.model.operations.PutTaskRequest;
 import br.com.thiagomoreira.replicon.util.DateUtil;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -278,6 +280,28 @@ public class Replicon {
 		response = restTemplate.exchange(getBaseServiceUrl()
 				+ "/TaskService1.svc/GetTaskDetails", HttpMethod.POST,
 				httpEntity, new ParameterizedTypeReference<Response<Task>>() {
+				});
+
+		return response.getBody().getD();
+	}
+
+	public Task putTask(Target project, Task task) throws IOException {
+		PutTaskRequest request = new PutTaskRequest();
+
+		request.setProject(project);
+		request.setTask(task);
+
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		ResponseEntity<Response<Task>> response = null;
+		HttpEntity<String> httpEntity = new HttpEntity<String>(
+				objectMapper.writeValueAsString(request), headers);
+
+		response = restTemplate.exchange(getBaseServiceUrl()
+				+ "/ProjectService1.svc/PutTask", HttpMethod.POST, httpEntity,
+				new ParameterizedTypeReference<Response<Task>>() {
 				});
 
 		return response.getBody().getD();

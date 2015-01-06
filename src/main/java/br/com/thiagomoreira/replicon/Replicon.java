@@ -47,6 +47,7 @@ import br.com.thiagomoreira.replicon.model.operations.AssignPermissionSetToUserR
 import br.com.thiagomoreira.replicon.model.operations.AssignResourceToProjectRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetAssignedPermissionSetsForUserRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetDirectReportsForUserRequest;
+import br.com.thiagomoreira.replicon.model.operations.GetProgramDetailsRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetProjectDetailsRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetResourceAllocationSummaryRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetResourceAllocationSummaryResponse;
@@ -191,6 +192,28 @@ public class Replicon {
 						httpEntity,
 						new ParameterizedTypeReference<Response<Permission[]>>() {
 						});
+
+		return response.getBody().getD();
+	}
+
+	public Program getProgram(String programUri) throws IOException {
+		GetProgramDetailsRequest request = new GetProgramDetailsRequest();
+
+		request.setProgramUri(programUri);
+
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		ResponseEntity<Response<Program>> response = null;
+		HttpEntity<String> httpEntity = new HttpEntity<String>(
+				objectMapper.writeValueAsString(request), headers);
+
+		response = restTemplate.exchange(getBaseServiceUrl()
+				+ "/ProgramService1.svc/GetProgramDetails", HttpMethod.POST,
+				httpEntity,
+				new ParameterizedTypeReference<Response<Program>>() {
+				});
 
 		return response.getBody().getD();
 	}

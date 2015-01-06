@@ -21,12 +21,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Program {
+public class ProgramManager {
 
 	protected String displayText;
-	protected String name;
-	protected ProgramManager programManager;
-	protected String slug;
 	protected String uri;
-
+	protected User user;
 }

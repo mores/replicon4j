@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package br.com.thiagomoreira.replicon.model;
+package br.com.thiagomoreira.replicon.model.operations;
 
 import lombok.Data;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Program {
+public class GetProgramDetailsRequest {
 
-	protected String displayText;
-	protected String name;
-	protected ProgramManager programManager;
-	protected String slug;
-	protected String uri;
-
+	protected String programUri;
 }

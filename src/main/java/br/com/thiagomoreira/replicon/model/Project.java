@@ -29,6 +29,7 @@ public class Project {
 	protected String uri;
 	protected Client client;
 	protected Program program;
+	protected User projectLeader;
 	protected Status status;
 
 }

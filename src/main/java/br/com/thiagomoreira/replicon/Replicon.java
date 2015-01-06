@@ -32,6 +32,7 @@ import org.springframework.web.client.RestTemplate;
 
 import br.com.thiagomoreira.replicon.model.DateRange;
 import br.com.thiagomoreira.replicon.model.Department;
+import br.com.thiagomoreira.replicon.model.Permission;
 import br.com.thiagomoreira.replicon.model.Program;
 import br.com.thiagomoreira.replicon.model.Project;
 import br.com.thiagomoreira.replicon.model.ProjectAllocation;
@@ -42,7 +43,9 @@ import br.com.thiagomoreira.replicon.model.Task;
 import br.com.thiagomoreira.replicon.model.TaskAllocation;
 import br.com.thiagomoreira.replicon.model.TimeOffAllocation;
 import br.com.thiagomoreira.replicon.model.User;
+import br.com.thiagomoreira.replicon.model.operations.AssignPermissionSetToUserRequest;
 import br.com.thiagomoreira.replicon.model.operations.AssignResourceToProjectRequest;
+import br.com.thiagomoreira.replicon.model.operations.GetAssignedPermissionSetsForUserRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetDirectReportsForUserRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetProjectDetailsRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetResourceAllocationSummaryRequest;
@@ -88,8 +91,8 @@ public class Replicon {
 		this.restTemplate = new RestTemplate(clientHttpRequestFactory);
 	}
 
-	public String assignResourceToProject(String projectUri,
-			String resourceUri, String resourceToReplaceUri) throws IOException {
+	public void assignResourceToProject(String projectUri, String resourceUri,
+			String resourceToReplaceUri) throws IOException {
 
 		AssignResourceToProjectRequest request = new AssignResourceToProjectRequest();
 		request.setProjectUri(projectUri);
@@ -109,8 +112,27 @@ public class Replicon {
 				HttpMethod.POST, httpEntity,
 				new ParameterizedTypeReference<Response<String>>() {
 				});
+	}
 
-		return response.getBody().getD();
+	public void assignPermissionSetToUser(String userUri,
+			String permissionSetUri) throws IOException {
+		AssignPermissionSetToUserRequest request = new AssignPermissionSetToUserRequest();
+		request.setPermissionSetUri(permissionSetUri);
+		request.setUserUri(userUri);
+
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		ResponseEntity<Response<String>> response = null;
+		HttpEntity<String> httpEntity = new HttpEntity<String>(
+				objectMapper.writeValueAsString(request), headers);
+
+		response = restTemplate.exchange(getBaseServiceUrl()
+				+ "/PermissionSetService1.svc/AssignPermissionSetToUser",
+				HttpMethod.POST, httpEntity,
+				new ParameterizedTypeReference<Response<String>>() {
+				});
 	}
 
 	public Department[] getEnabledDepartments() {
@@ -126,6 +148,49 @@ public class Replicon {
 				HttpMethod.POST, httpEntity,
 				new ParameterizedTypeReference<Response<Department[]>>() {
 				});
+
+		return response.getBody().getD();
+	}
+
+	public Permission[] getPermissions() {
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		ResponseEntity<Response<Permission[]>> response = null;
+		HttpEntity<String> httpEntity = new HttpEntity<String>(headers);
+
+		response = restTemplate.exchange(getBaseServiceUrl()
+				+ "/PermissionSetService1.svc/GetAllPermissionSets",
+				HttpMethod.POST, httpEntity,
+				new ParameterizedTypeReference<Response<Permission[]>>() {
+				});
+
+		return response.getBody().getD();
+	}
+
+	public Permission[] getPermissionsAssignedForUser(String userUri)
+			throws IOException {
+		GetAssignedPermissionSetsForUserRequest request = new GetAssignedPermissionSetsForUserRequest();
+
+		request.setUserUri(userUri);
+
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		ResponseEntity<Response<Permission[]>> response = null;
+		HttpEntity<String> httpEntity = new HttpEntity<String>(
+				objectMapper.writeValueAsString(request), headers);
+
+		response = restTemplate
+				.exchange(
+						getBaseServiceUrl()
+								+ "/PermissionSetService1.svc/GetAssignedPermissionSetsForUser",
+						HttpMethod.POST,
+						httpEntity,
+						new ParameterizedTypeReference<Response<Permission[]>>() {
+						});
 
 		return response.getBody().getD();
 	}

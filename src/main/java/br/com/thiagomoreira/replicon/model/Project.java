@@ -31,5 +31,5 @@ public class Project {
 	protected Program program;
 	protected User projectLeader;
 	protected Status status;
-
+	protected boolean isIsProjectLeaderApprovalRequired;
 }

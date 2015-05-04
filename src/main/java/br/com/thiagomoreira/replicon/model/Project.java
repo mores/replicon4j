@@ -30,6 +30,8 @@ public class Project {
 	protected Client client;
 	protected Program program;
 	protected User projectLeader;
+	protected Status projectStatusLabel;
 	protected Status status;
+	protected DateRange timeEntryDateRange;
 	protected boolean isIsProjectLeaderApprovalRequired;
 }

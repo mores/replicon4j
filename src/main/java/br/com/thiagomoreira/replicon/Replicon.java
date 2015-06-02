@@ -32,6 +32,7 @@ import org.springframework.web.client.RestTemplate;
 
 import br.com.thiagomoreira.replicon.model.DateRange;
 import br.com.thiagomoreira.replicon.model.Department;
+import br.com.thiagomoreira.replicon.model.Entry;
 import br.com.thiagomoreira.replicon.model.Permission;
 import br.com.thiagomoreira.replicon.model.Program;
 import br.com.thiagomoreira.replicon.model.Project;
@@ -42,13 +43,16 @@ import br.com.thiagomoreira.replicon.model.Target;
 import br.com.thiagomoreira.replicon.model.Task;
 import br.com.thiagomoreira.replicon.model.TaskAllocation;
 import br.com.thiagomoreira.replicon.model.TimeOffAllocation;
+import br.com.thiagomoreira.replicon.model.Timesheet;
 import br.com.thiagomoreira.replicon.model.User;
 import br.com.thiagomoreira.replicon.model.operations.AssignPermissionSetToUserRequest;
 import br.com.thiagomoreira.replicon.model.operations.AssignResourceToProjectRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetAssignedPermissionSetsForUserRequest;
+import br.com.thiagomoreira.replicon.model.operations.GetChildrenTaskDetailsRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetDirectReportsForUserRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetProgramDetailsRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetProjectDetailsRequest;
+import br.com.thiagomoreira.replicon.model.operations.GetProjectReferenceFromSlugRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetResourceAllocationSummaryRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetResourceAllocationSummaryResponse;
 import br.com.thiagomoreira.replicon.model.operations.GetResourceDetailsRequest;
@@ -56,9 +60,14 @@ import br.com.thiagomoreira.replicon.model.operations.GetResourceTaskAllocationD
 import br.com.thiagomoreira.replicon.model.operations.GetResourceTaskAllocationDetailsResponse;
 import br.com.thiagomoreira.replicon.model.operations.GetTaskDetailsRequest;
 import br.com.thiagomoreira.replicon.model.operations.GetTimeOffDetailsForUserAndDateRangeRequest;
+import br.com.thiagomoreira.replicon.model.operations.GetTimesheetDetailsRequest;
+import br.com.thiagomoreira.replicon.model.operations.GetTimesheetForDate2Request;
+import br.com.thiagomoreira.replicon.model.operations.GetTimesheetForDate2Response;
 import br.com.thiagomoreira.replicon.model.operations.GetUser2Request;
 import br.com.thiagomoreira.replicon.model.operations.PutProjectInfoRequest;
 import br.com.thiagomoreira.replicon.model.operations.PutTaskRequest;
+import br.com.thiagomoreira.replicon.model.operations.PutInOutTimesheet3Request;
+import br.com.thiagomoreira.replicon.model.operations.PutInOutTimesheet3Response;
 import br.com.thiagomoreira.replicon.util.DateUtil;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -134,6 +143,44 @@ public class Replicon {
 				HttpMethod.POST, httpEntity,
 				new ParameterizedTypeReference<Response<String>>() {
 				});
+	}
+
+	public Resource[] getAllBreakTypes() {
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		ResponseEntity<Response<Resource[]>> response = null;
+		HttpEntity<String> httpEntity = new HttpEntity<String>(headers);
+
+		response = restTemplate.exchange(getBaseServiceUrl()
+				+ "/BreakTypeService1.svc/GetAllBreakTypes", HttpMethod.POST,
+				httpEntity,
+				new ParameterizedTypeReference<Response<Resource[]>>() {
+				});
+
+		return response.getBody().getD();
+	}
+
+	public Task[] getChildrenTaskDetails(String parentUri) throws IOException {
+		GetChildrenTaskDetailsRequest request = new GetChildrenTaskDetailsRequest();
+
+		request.setParentUri(parentUri);
+
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		ResponseEntity<Response<Task[]>> response = null;
+		HttpEntity<String> httpEntity = new HttpEntity<String>(
+				objectMapper.writeValueAsString(request), headers);
+
+		response = restTemplate.exchange(getBaseServiceUrl()
+				+ "/TaskService1.svc/GetChildrenTaskDetails", HttpMethod.POST,
+				httpEntity, new ParameterizedTypeReference<Response<Task[]>>() {
+				});
+
+		return response.getBody().getD();
 	}
 
 	public Department[] getEnabledDepartments() {
@@ -274,6 +321,27 @@ public class Replicon {
 		response = restTemplate.exchange(getBaseServiceUrl()
 				+ "/ProjectService1.svc/PutProjectInfo", HttpMethod.POST,
 				httpEntity,
+				new ParameterizedTypeReference<Response<Resource>>() {
+				});
+
+		return response.getBody().getD();
+	}
+
+	public Resource getProjectReferenceFromSlug(String slug) throws IOException {
+		GetProjectReferenceFromSlugRequest request = new GetProjectReferenceFromSlugRequest();
+		request.setProjectSlug(slug);
+
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		ResponseEntity<Response<Resource>> response = null;
+		HttpEntity<String> httpEntity = new HttpEntity<String>(
+				objectMapper.writeValueAsString(request), headers);
+
+		response = restTemplate.exchange(getBaseServiceUrl()
+				+ "/ProjectService1.svc/GetProjectReferenceFromSlug",
+				HttpMethod.POST, httpEntity,
 				new ParameterizedTypeReference<Response<Resource>>() {
 				});
 
@@ -450,6 +518,87 @@ public class Replicon {
 						HttpMethod.POST,
 						httpEntity,
 						new ParameterizedTypeReference<Response<TimeOffAllocation[]>>() {
+						});
+
+		return response.getBody().getD();
+	}
+
+	public Timesheet getTimesheetDetails(String timesheetUri)
+			throws IOException {
+		GetTimesheetDetailsRequest request = new GetTimesheetDetailsRequest();
+		request.setTimesheetUri(timesheetUri);
+
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		ResponseEntity<Response<Timesheet>> response = null;
+		HttpEntity<String> httpEntity = new HttpEntity<String>(
+				objectMapper.writeValueAsString(request), headers);
+
+		response = restTemplate.exchange(getBaseServiceUrl()
+				+ "/TimesheetService1.svc/GetTimesheetDetails",
+				HttpMethod.POST, httpEntity,
+				new ParameterizedTypeReference<Response<Timesheet>>() {
+				});
+
+		return response.getBody().getD();
+	}
+
+	public Resource getTimesheetForDate(String userUri, Date date)
+			throws IOException {
+		GetTimesheetForDate2Request request = new GetTimesheetForDate2Request();
+
+		request.setUserUri(userUri);
+		request.setDate(DateUtil.translateDate(date));
+		request.setTimesheetGetOptionUri("urn:replicon:timesheet-get-option:create-timesheet-if-necessary");
+
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		ResponseEntity<Response<GetTimesheetForDate2Response>> response = null;
+		HttpEntity<String> httpEntity = new HttpEntity<String>(
+				objectMapper.writeValueAsString(request), headers);
+
+		response = restTemplate
+				.exchange(
+						getBaseServiceUrl()
+								+ "/TimesheetService1.svc/GetTimesheetForDate2",
+						HttpMethod.POST,
+						httpEntity,
+						new ParameterizedTypeReference<Response<GetTimesheetForDate2Response>>() {
+						});
+
+		if (response.getBody().getD() != null) {
+			return response.getBody().getD().getTimesheet();
+		}
+
+		return null;
+	}
+
+	public PutInOutTimesheet3Response putInOutTimesheet(Timesheet timesheet)
+			throws IOException {
+
+		PutInOutTimesheet3Request request = new PutInOutTimesheet3Request();
+
+		request.setTimesheet(timesheet);
+
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		ResponseEntity<Response<PutInOutTimesheet3Response>> response = null;
+		HttpEntity<String> httpEntity = new HttpEntity<String>(
+				objectMapper.writeValueAsString(request), headers);
+
+		response = restTemplate
+				.exchange(
+						getBaseServiceUrl()
+								+ "/InOutTimesheetService1.svc/PutInOutTimesheet3",
+						HttpMethod.POST,
+						httpEntity,
+						new ParameterizedTypeReference<Response<PutInOutTimesheet3Response>>() {
 						});
 
 		return response.getBody().getD();

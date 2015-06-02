@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package br.com.thiagomoreira.replicon.model;
+package br.com.thiagomoreira.replicon.model.operations;
+
+import br.com.thiagomoreira.replicon.model.Timesheet;
 
 import lombok.Data;
 
@@ -21,25 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Task {
+public class PutInOutTimesheet3Request {
 
-	public Task() {
-		customFieldValues = new String[0];
-		assignedResources = new AssignedResources[0];
-	}
-
-	protected Target target;
-	protected String name;
-	protected String code;
-	protected String description;
-	protected DateRange timeEntryDateRange;
-	protected int percentCompleted;
-	protected boolean isIsTimeEntryAllowed;
-	protected String estimatedHours;
-	protected boolean isIsClosed;
-	protected String[] customFieldValues;
-	protected String estimatedCost;
-	protected String costTypeUri;
-	protected AssignedResources[] assignedResources;
-	protected String uri;
+	protected Timesheet timesheet;
 }

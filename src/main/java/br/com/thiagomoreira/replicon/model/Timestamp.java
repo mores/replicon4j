@@ -15,31 +15,19 @@
  */
 package br.com.thiagomoreira.replicon.model;
 
-import lombok.Data;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Task {
+public class Timestamp {
 
-	public Task() {
-		customFieldValues = new String[0];
-		assignedResources = new AssignedResources[0];
-	}
-
-	protected Target target;
-	protected String name;
-	protected String code;
-	protected String description;
-	protected DateRange timeEntryDateRange;
-	protected int percentCompleted;
-	protected boolean isIsTimeEntryAllowed;
-	protected String estimatedHours;
-	protected boolean isIsClosed;
-	protected String[] customFieldValues;
-	protected String estimatedCost;
-	protected String costTypeUri;
-	protected AssignedResources[] assignedResources;
-	protected String uri;
+	protected int year;
+	protected int month;
+	protected int day;
+	protected int hour;
+	protected int minute;
+	protected int second;
+	protected String timeZoneUri;
 }

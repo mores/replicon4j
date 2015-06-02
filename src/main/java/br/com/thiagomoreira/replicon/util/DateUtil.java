@@ -69,4 +69,24 @@ public class DateUtil {
 		return result;
 	}
 
+	public static br.com.thiagomoreira.replicon.model.Timestamp translateTimestamp(
+			Date date, java.util.TimeZone tz) {
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeZone(tz);
+		calendar.set(Calendar.MILLISECOND, 0);
+
+		calendar.setTime(date);
+
+		br.com.thiagomoreira.replicon.model.Timestamp result = new br.com.thiagomoreira.replicon.model.Timestamp();
+
+		result.setYear(calendar.get(Calendar.YEAR));
+		result.setMonth(calendar.get(Calendar.MONTH) + 1);
+		result.setDay(calendar.get(Calendar.DAY_OF_MONTH));
+		result.setHour(calendar.get(Calendar.HOUR_OF_DAY));
+		result.setMinute(calendar.get(Calendar.MINUTE));
+		result.setSecond(calendar.get(Calendar.SECOND));
+
+		return result;
+	}
 }
